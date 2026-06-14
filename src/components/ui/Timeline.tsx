@@ -24,7 +24,9 @@ export function Timeline() {
     const tick = (now: number) => {
       const dt = (now - last) / 1000;
       last = now;
-      const next = Math.min(progress + dt * 520, MAX_AGE); // ~7s sweep
+      // Read the live value each frame so progress accumulates correctly.
+      const current = MAX_AGE - useStore.getState().timelineMya;
+      const next = Math.min(current + dt * 520, MAX_AGE); // ~7s sweep
       setTimeline(MAX_AGE - next);
       if (next >= MAX_AGE) {
         setPlaying(false);
@@ -40,7 +42,9 @@ export function Timeline() {
   }, [playing]);
 
   const startPlay = () => {
-    if (progress >= MAX_AGE) setTimeline(MAX_AGE); // restart from origin
+    // If we're at (or near) the present, restart the sweep from the origin.
+    const current = MAX_AGE - useStore.getState().timelineMya;
+    if (current >= MAX_AGE - 1) setTimeline(MAX_AGE);
     setPlaying(true);
   };
 
