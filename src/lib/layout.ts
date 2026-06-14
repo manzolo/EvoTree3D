@@ -12,7 +12,7 @@ export interface LaidOutNode {
 
 const MAX_AGE = 3800; // Mya, age of LUCA
 const HEIGHT = 64; // vertical extent of the tree (present at top)
-const LEVEL_STEP = 5.6; // horizontal radius added per depth level
+const LEVEL_STEP = 3.6; // horizontal radius added per depth level
 
 /** Map an age (Mya) to a vertical position. Non-linear so recent eras spread out. */
 export function ageToY(ageMya: number): number {
@@ -66,4 +66,14 @@ export function layoutTree(root: CladeNode): LaidOutNode[] {
 
   walk(root, 0, 0, Math.PI * 2, null, null);
   return out;
+}
+
+/** Largest horizontal distance from the central axis across the laid-out tree. */
+export function canopyRadius(layout: LaidOutNode[]): number {
+  let max = 0;
+  for (const l of layout) {
+    const r = Math.hypot(l.position[0], l.position[2]);
+    if (r > max) max = r;
+  }
+  return max;
 }

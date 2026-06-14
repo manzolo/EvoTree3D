@@ -1,6 +1,8 @@
+import { useMemo } from 'react';
 import { Html } from '@react-three/drei';
 import { EVENTS } from '../data/events';
-import { ageToY } from '../lib/layout';
+import { TREE } from '../data/tree';
+import { ageToY, canopyRadius, layoutTree } from '../lib/layout';
 import { useStore } from '../store';
 
 const LAYER_COLORS: Record<string, string> = {
@@ -19,6 +21,8 @@ export function EventMarkers() {
   const timelineActive = useStore((s) => s.timelineActive);
   const timelineMya = useStore((s) => s.timelineMya);
 
+  const ringR = useMemo(() => canopyRadius(layoutTree(TREE)) + 6, []);
+
   if (!show) return null;
 
   return (
@@ -31,11 +35,11 @@ export function EventMarkers() {
         return (
           <group key={ev.id} position={[0, y, 0]}>
             <mesh rotation={[-Math.PI / 2, 0, 0]}>
-              <ringGeometry args={[46, 46.5, 96]} />
+              <ringGeometry args={[ringR, ringR + 0.5, 128]} />
               <meshBasicMaterial color={color} transparent opacity={0.35} />
             </mesh>
             <Html
-              position={[48, 0, 0]}
+              position={[ringR + 2, 0, 0]}
               distanceFactor={90}
               style={{ pointerEvents: 'none' }}
             >
